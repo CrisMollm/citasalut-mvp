@@ -24,7 +24,7 @@ public class Cita {
     private String nombreMedico;
 
     @Column(nullable = false)
-    private String espcialidad;
+    private String especialidad;
 
     @Column(name="fecha_hora",nullable = false)
     private LocalDateTime fechaHora;
