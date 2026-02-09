@@ -23,7 +23,7 @@ public class JwtTokenUtil {
     @Value("${jwt.expiration}")
     private Long expiration;
 
-    // Genera la clave criptográfica usando el secreto configurado
+    // Generamos la clave de tipo (HS256) usando la contrasena especificada en properties
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
@@ -39,11 +39,11 @@ public class JwtTokenUtil {
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token); // 1. Abre el token entero
-        return claimsResolver.apply(claims);           // 2. Aplica la herramienta que le has pasado
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
     }
 
-    // "Abre" el token para leer lo que hay dentro usando la clave secreta
+    // Abre el token para leer lo que hay dentro y compruba que el token es correcto
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -60,14 +60,14 @@ public class JwtTokenUtil {
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
 
-        // Buscamos el rol del usuario (Ej: ROLE_PACIENTE)
-        // Si no tiene, le asignamos "USER" por defecto
+        // Buscamos el rol del usuario
+        // Si no tiene, le asignamos " por defecto
         String role = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
                 .orElse("USER");
 
-        claims.put("role", role); // Guardamos el rol DENTRO del token
+        claims.put("role", role); // Guardamos el rol dentro del token
         return createToken(claims, userDetails.getUsername());
     }
 
@@ -81,7 +81,7 @@ public class JwtTokenUtil {
                 .compact();
     }
 
-    // --- VALIDACIÓN (En cada petición) ---
+    //valida qu el tokn no ha caducado y si l usuario asociado existe
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         // Es válido si el usuario coincide y no ha caducado
