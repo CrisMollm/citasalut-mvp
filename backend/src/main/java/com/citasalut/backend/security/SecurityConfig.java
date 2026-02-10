@@ -13,9 +13,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Service;
 
 @Configuration
@@ -24,7 +26,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtTokenUtil jwtTokenUtil;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
@@ -48,11 +50,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         //desactiva CSRF
-        http
+        http    //Lista de acceso (Whitelist vs Blacklist)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers())
+                        .requestMatchers("/api/auth/**").permitAll()//Permite login y registro
+                        .requestMatchers("/error").permitAll()
+                        .anyRequest().authenticated()//Alto a el resto de peticiones
+                )
+                //Gestión de Sesión: STATELESS
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                //Proveedor de logica
+                .authenticationProvider(authenticationProvider())
+
+                //filtro jwt
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
 
     }
 }
