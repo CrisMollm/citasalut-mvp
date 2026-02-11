@@ -56,7 +56,7 @@ public class JwtTokenUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    // --- CREACIÓN DEL TOKEN (Login) ---
+    //  CREACIÓN DEL TOKEN (Login)
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
 

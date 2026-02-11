@@ -49,8 +49,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        //desactiva CSRF
+
         http    //Lista de acceso (Whitelist vs Blacklist)
+                //desactiva CSRF
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()//Permite login y registro
