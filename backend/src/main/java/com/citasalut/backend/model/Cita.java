@@ -17,18 +17,18 @@ public class Cita {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "pacient_id", nullable = false)
     private Usuario usuario;
 
-    @Column(name = "nombre_medico", nullable = false)
+    @Column(name = "metge_nom", nullable = false)
     private String nombreMedico;
 
     @Column(nullable = false)
     private String especialidad;
 
-    @Column(name="fecha_hora",nullable = false)
-    private LocalDateTime fechaHora;
+    @Column(name="data_hora",nullable = false)
+    private LocalDateTime dataHora;
 
     @Column(nullable = false)
-    private String estado = "PENDENTE";
+    private String estat = "PENDENTE";
 }
