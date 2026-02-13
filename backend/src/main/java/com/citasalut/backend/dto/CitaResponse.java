@@ -16,5 +16,12 @@ public class CitaResponse {
     private LocalDateTime dataHora;
     private String estat;
 
-    //AllArgsConstructor();
+    public CitaResponse(Long id, Long pacientId, String nombreMedico, String especialidad, LocalDateTime dataHora, String estat) {
+        this.id = id;
+        this.pacientId = pacientId;
+        this.nombreMedico = nombreMedico;
+        this.especialidad = especialidad;
+        this.dataHora = dataHora;
+        this.estat = estat;
+    }
 }

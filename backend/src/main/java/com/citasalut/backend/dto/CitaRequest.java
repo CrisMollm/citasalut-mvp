@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class CitaRequest {
 
     @NotNull(message = "La fecha y hora son obligatorias")
-    private LocalDateTime fechaHora;
+    private LocalDateTime dataHora;
 
     @NotNull(message = "La especialidad es obligatoria")
     private String especialidad;

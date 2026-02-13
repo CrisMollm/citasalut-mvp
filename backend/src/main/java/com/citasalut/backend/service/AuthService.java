@@ -1,10 +1,8 @@
 package com.citasalut.backend.service;
 
 
-import com.citasalut.backend.dto.AuthResponse;
-import com.citasalut.backend.dto.LoginRequest;
-import com.citasalut.backend.dto.MessageResponse;
-import com.citasalut.backend.dto.RegisterRequest;
+import com.citasalut.backend.dto.*;
+import com.citasalut.backend.model.Cita;
 import com.citasalut.backend.model.Usuario;
 import com.citasalut.backend.repository.UsuarioRepository;
 import com.citasalut.backend.security.JwtTokenUtil;
