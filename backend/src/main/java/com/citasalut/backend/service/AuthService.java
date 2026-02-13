@@ -3,6 +3,8 @@ package com.citasalut.backend.service;
 
 import com.citasalut.backend.dto.AuthResponse;
 import com.citasalut.backend.dto.LoginRequest;
+import com.citasalut.backend.dto.MessageResponse;
+import com.citasalut.backend.dto.RegisterRequest;
 import com.citasalut.backend.model.Usuario;
 import com.citasalut.backend.repository.UsuarioRepository;
 import com.citasalut.backend.security.JwtTokenUtil;
@@ -23,6 +25,7 @@ public class AuthService {
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticationManager authenticationManager;
 
+    //LOGIN
     public AuthResponse login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
@@ -37,5 +40,25 @@ public class AuthService {
         return new AuthResponse(token, user.getNombre(), user.getEmail(), user.getRol());
     }
 
+    //REGISTER
+    public MessageResponse register(RegisterRequest request) {
+        // Comprobamos si el email ya existe
+        if (usuarioRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Error: El email ya está en uso");
+        }
+
+        // Creamos el usuario
+        Usuario usuario = new Usuario();
+        usuario.setNombre(request.getNombre());
+        usuario.setEmail(request.getEmail());
+        usuario.setPassword(passwordEncoder.encode(request.getPassword())); // contrseña encriptada
+        usuario.setRol("PACIENTE");
+
+        // Guardamos en la base de datos
+        usuarioRepository.save(usuario);
+
+        // Devolvemos el mensaje de exito usando el DTO para el mensaje
+        return new MessageResponse("Usuario registrado exitosamente");
+    }
 
 }
