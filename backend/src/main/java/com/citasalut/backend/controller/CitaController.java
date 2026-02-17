@@ -55,5 +55,11 @@ public class CitaController {
         return ResponseEntity.ok(misCitas);
     }
 
+    @PutMapping("/{id}/cancelar")
+    public ResponseEntity<Cita> cancelarCita(@PathVariable Long id, Principal principal) {
+        Cita citaCancelada= citaService.cancelarCita(id, principal.getName());
+        return ResponseEntity.ok(citaCancelada);
+    }
+
 
 }

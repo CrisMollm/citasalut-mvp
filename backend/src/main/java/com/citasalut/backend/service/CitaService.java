@@ -111,6 +111,21 @@ public class CitaService {
         return slotsDisponibles;
     }
 
+    //Cancelar citas
+    public Cita cancelarCita(Long idCita, String emailUsuario){
+        Cita cita = citaRepository.findById(idCita)
+                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+
+        if (!cita.getUsuario().getEmail().equals(emailUsuario)){
+            throw new RuntimeException("No tienes permisos");
+        }
+        if (!"PENDIENTE".equals(cita.getEstat())){
+            throw new RuntimeException("Solo se pueden cancelar citas pendientes.");
+        }
+        cita.setEstat("CANCELADA");
+        return citaRepository.save(cita);
+    }
+
 
 
     //Metodo para convertir una cita en un CitaResponse DTO//
