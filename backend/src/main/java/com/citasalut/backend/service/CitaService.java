@@ -7,7 +7,9 @@ import com.citasalut.backend.model.Usuario;
 import com.citasalut.backend.repository.CitaRepository;
 import com.citasalut.backend.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,7 +28,7 @@ public class CitaService {
     //Reservar-Crear cita//
     public CitaResponse createCita(CitaRequest citaRequest, String emailPaciente){
         if (citaRepository.existsByDataHora(citaRequest.getDataHora())){
-            throw new RuntimeException("Error: La hora seleccionada ya está ocupada.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error: L'hora seleccionada ja està ocupada.");
         }
 
         Usuario usuario = usuarioRepository.findByEmail(emailPaciente)
@@ -47,12 +49,12 @@ public class CitaService {
     }
 
 
-    //Metodo para litar citas (ya reservadas)//
+    //Metodo para litar citas de un usuario (ya reservadas)//
     public List<CitaResponse> listarCitas(String emailPaciente){
     Usuario usuario = usuarioRepository.findByEmail(emailPaciente)
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-    List<Cita> citas = citaRepository.findByUsuario_Id(usuario.getId());
+    List<Cita> citas = citaRepository.findByUsuario_IdOrderByDataHoraAsc(usuario.getId());
     List<CitaResponse> listaFinal = new ArrayList<>();
 
         for (Cita cita : citas) {
