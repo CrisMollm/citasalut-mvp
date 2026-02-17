@@ -9,6 +9,9 @@ import com.citasalut.backend.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CitaService {
@@ -31,12 +34,29 @@ public class CitaService {
         cita.setUsuario(usuario);
         cita.setEspecialidad(citaRequest.getEspecialidad());
         cita.setNombreMedico(citaRequest.getNombreMedico());
-        cita.setEstat("Paciente");
+        cita.setEstat("PENDIENTE");
         //Guardamos la cita en el repositorio y en la variable final para el return
         Cita citaGuardada= citaRepository.save(cita);
 
         //Devolvemos la cita convrtida a CitaResponse
         return convertirADTO(citaGuardada);
+    }
+
+    //Metodo para litar citas
+
+    public List<CitaResponse> listarCitas(String emailPaciente){
+    Usuario usuario = usuarioRepository.findByEmail(emailPaciente)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+    List<Cita> citas = citaRepository.findByUsuario_Id(usuario.getId());
+    List<CitaResponse> listaFinal = new ArrayList<>();
+
+        for (Cita cita : citas) {
+
+            CitaResponse dto = convertirADTO(cita);
+            listaFinal.add(dto);
+        }
+        return listaFinal;
     }
 
 

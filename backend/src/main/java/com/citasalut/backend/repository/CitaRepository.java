@@ -11,7 +11,7 @@ public interface CitaRepository extends JpaRepository<Cita,Long> {
     //Buscar citas entre una hora de inicio y fin
     List<Cita> findByDataHoraBetween(LocalDateTime start, LocalDateTime end);
     //historial del paciente usando su id
-    List<Cita> findByPacienteId(Long usuarioId);
+    List<Cita> findByUsuario_Id(Long id);
 
     Boolean existsByDataHora(LocalDateTime dataHora);
 }
