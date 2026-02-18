@@ -1,0 +1,62 @@
+<div class="register-container">
+
+  <mat-card class="register-card">
+
+    <mat-card-header>
+      <mat-card-title>Crear Cuenta</mat-card-title>
+      <mat-card-subtitle>Únete a CitaSalut</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form (ngSubmit)="onSubmit()" #regForm="ngForm">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre Completo</mat-label>
+          <input matInput
+                 type="text"
+                 name="nombre"
+                 [(ngModel)]="userData.nombre"
+                 required>
+          <mat-error>El nombre es obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Correo Electrónico</mat-label>
+          <input matInput
+                 type="email"
+                 name="email"
+                 [(ngModel)]="userData.email"
+                 required
+                 email>
+          <mat-error>Introduce un correo válido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Contraseña</mat-label>
+          <input matInput
+                 type="password"
+                 name="password"
+                 [(ngModel)]="userData.password"
+                 required
+                 minlength="6">
+          <mat-error>Mínimo 6 caracteres</mat-error>
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-flat-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="!regForm.form.valid">
+            Registrarse
+          </button>
+        </div>
+
+      </form>
+    </mat-card-content>
+
+    <mat-card-footer>
+      <p>¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>
+    </mat-card-footer>
+
+  </mat-card>
+</div>
