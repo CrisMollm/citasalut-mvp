@@ -1,0 +1,31 @@
+/* Centrar la tarjeta */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+button {
+  width: 100%;
+  padding: 5px;
+  font-size: 1.1rem;
+}
+
+mat-card-footer {
+  text-align: center;
+  margin-top: 20px;
+  padding-bottom: 20px;
+}
