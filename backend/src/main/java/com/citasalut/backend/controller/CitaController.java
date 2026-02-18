@@ -24,7 +24,7 @@ public class CitaController {
 
     private final CitaService citaService;
 
-    //Endpoint para generar los slots disponibles de citas
+    //Endpoint para generar los slots disponibles de citas (GET/DISPONIBLES)
     @GetMapping("disponibles")
     public ResponseEntity<List<String>> obtenerSlotsDisponibles(@RequestParam String fecha) {
         LocalDate fechaConsultada =  LocalDate.parse(fecha);
@@ -34,7 +34,7 @@ public class CitaController {
     }
 
 
-    //Endpoint para reservar una cita nueva
+    //Endpoint para reservar una cita nueva (POST)
     @PostMapping
     public ResponseEntity<CitaResponse> crearCita(@Valid @RequestBody CitaRequest citaRequest, Principal principal) {
        //Nos devuelve el email obtenido de el TOKEN, no el nombre
@@ -45,7 +45,7 @@ public class CitaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCita);
     }
 
-    //Endpoint Historial de citas
+    //Endpoint Historial de citas (GET)
     @GetMapping
     public ResponseEntity<List<CitaResponse>> obtenerCitas(Principal principal) {
         //Nos devuelve el email obtenido de el TOKEN, no el nombre
@@ -55,11 +55,11 @@ public class CitaController {
         return ResponseEntity.ok(misCitas);
     }
 
+    //(PUT)
     @PutMapping("/{id}/cancelar")
     public ResponseEntity<Cita> cancelarCita(@PathVariable Long id, Principal principal) {
         Cita citaCancelada= citaService.cancelarCita(id, principal.getName());
         return ResponseEntity.ok(citaCancelada);
     }
-
 
 }
