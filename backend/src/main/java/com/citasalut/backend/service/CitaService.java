@@ -25,10 +25,21 @@ public class CitaService {
     private  final UsuarioRepository usuarioRepository;
 
 
+    //Generar horario
+    public List<String> generarHorarioHospital() {
+        List<String> slots = new ArrayList<>();
+        LocalTime hora = LocalTime.of(9, 0);
+        while (hora.isBefore(LocalTime.of(20, 0))) {
+            slots.add(hora.toString()); // Guarda 09:00
+            hora = hora.plusMinutes(30);
+        }
+        return slots;
+    }
+
     //Reservar-Crear cita//
     public CitaResponse createCita(CitaRequest citaRequest, String emailPaciente){
-        if (citaRepository.existsByDataHora(citaRequest.getDataHora())){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error: L'hora seleccionada ja està ocupada.");
+        if (citaRepository.existsByDataHoraAndEspecialidad(citaRequest.getDataHora(), citaRequest.getEspecialidad())){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error: Esta especialidad ya tiene una cita a esta hora.");
         }
 
         Usuario usuario = usuarioRepository.findByEmail(emailPaciente)
@@ -42,9 +53,9 @@ public class CitaService {
         cita.setNombreMedico(citaRequest.getNombreMedico());
         cita.setEstat("PENDIENTE");
         //Guardamos la cita en el repositorio y en la variable final para el return
-        Cita citaGuardada= citaRepository.save(cita);
+        Cita citaGuardada = citaRepository.save(cita);
 
-        //Devolvemos la cita convrtida a CitaResponse
+        // Devolvemos la cita convertida a CitaResponse
         return convertirADTO(citaGuardada);
     }
 
@@ -67,48 +78,39 @@ public class CitaService {
 
 
     //Metodo para generar sltos de citas libres(30 min)//
-    public List<String> obtenerSlotsDisponibles(LocalDate fecha){
-        LocalTime horaInicio = LocalTime.of(9, 0);
-        LocalTime horaFin = LocalTime.of(20, 0);
-        int duracionCita = 30; //Minutos
-
-        //Buscar citas ya resrvadas
-        LocalDateTime inicioDia = fecha.atStartOfDay(); //00:00:00 del dia
-        LocalDateTime finDia = fecha.atTime(LocalTime.MAX); // 23:59:59 del dia
+    public List<String> obtenerSlotsDisponibles(LocalDate fecha, String especialidad){
+        LocalDateTime inicioDia = fecha.atStartOfDay();
+        LocalDateTime finDia = fecha.atTime(LocalTime.MAX);
 
         //guarddamos en la lista las citas reservadas
-        List<Cita> citasOcupadas = citaRepository.findByDataHoraBetween(inicioDia, finDia);
+        List<Cita> citasOcupadas = citaRepository.findByDataHoraBetweenAndEspecialidad(inicioDia, finDia, especialidad );
 
-        //De la lista con las citas sacamos las horas de inicio de cada una
         List<LocalTime> horasOcupadas = new ArrayList<>();
         for (Cita cita : citasOcupadas) {
             horasOcupadas.add(cita.getDataHora().toLocalTime());
         }
 
-        //Creamos la lista de slots y la variable para ir sumando 30 min (horaAddCita)
-        List<String> slotsDisponibles = new ArrayList<>();
-        LocalTime horaAddCita = horaInicio;
 
-        //Usamos la hora actual del usuario para no mostrar las citas del dia que ya han pasado
-        LocalTime horaAhora = LocalTime.now();
+        List<String> todosLosSlots = generarHorarioHospital();
+        List<String> disponibles = new ArrayList<>();
 
-        while (horaAddCita.isBefore(horaFin)) {
+        LocalTime ahora = LocalTime.now();
+        LocalDate hoy = LocalDate.now();
 
-            //sumamos +30 hasta estar en el "presente"
-            if (horaAddCita.isBefore(horaAhora)) {
-                horaAddCita = horaAddCita.plusMinutes(duracionCita);
-                continue; //Continue da otra vuelta al bucle desde el principio
+        for (int i = 0; i < todosLosSlots.size(); i++) {
+            String slotString = todosLosSlots.get(i); //
+            LocalTime horaSlot = LocalTime.parse(slotString);
+
+            //saltamos la horas pasadas
+            if (fecha.equals(hoy) && horaSlot.isBefore(ahora)) {
+                continue;
             }
-
-            //comprobamos que la hora de horaAddCita no esta dentro de horasOcupadas y la añadimos a slotsDisponibles
-            if(!horasOcupadas.contains(horaAddCita)){
-                slotsDisponibles.add(horaAddCita.toString());
+            //comprobamos que la hora no este reservada ya
+            if(!horasOcupadas.contains(horaSlot)){
+                disponibles.add(slotString);
             }
-            //Sumamos 30
-            horaAddCita = horaAddCita.plusMinutes(duracionCita);
         }
-        //devolvemos la lista de Strings con las horas disponibles
-        return slotsDisponibles;
+        return disponibles;
     }
 
     //Cancelar citas

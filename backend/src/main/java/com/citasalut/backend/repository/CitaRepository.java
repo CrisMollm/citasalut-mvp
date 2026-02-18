@@ -9,9 +9,10 @@ import java.util.List;
 public interface CitaRepository extends JpaRepository<Cita,Long> {
 
     //Buscar citas entre una hora de inicio y fin
-    List<Cita> findByDataHoraBetween(LocalDateTime start, LocalDateTime end);
+    List<Cita> findByDataHoraBetweenAndEspecialidad(LocalDateTime inicio, LocalDateTime fin, String especialidad);
     //historial del paciente usando su id
     List<Cita> findByUsuario_IdOrderByDataHoraAsc(Long id);
 
-    Boolean existsByDataHora(LocalDateTime dataHora);
+    boolean existsByDataHoraAndEspecialidad(LocalDateTime dataHora, String especialidad);
 }
+
