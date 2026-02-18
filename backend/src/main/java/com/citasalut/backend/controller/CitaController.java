@@ -4,7 +4,6 @@ package com.citasalut.backend.controller;
 import com.citasalut.backend.dto.CitaRequest;
 import com.citasalut.backend.dto.CitaResponse;
 import com.citasalut.backend.model.Cita;
-import com.citasalut.backend.repository.CitaRepository;
 import com.citasalut.backend.service.CitaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +25,9 @@ public class CitaController {
 
     //Endpoint para generar los slots disponibles de citas (GET/DISPONIBLES)
     @GetMapping("disponibles")
-    public ResponseEntity<List<String>> obtenerSlotsDisponibles(@RequestParam String fecha) {
-        LocalDate fechaConsultada =  LocalDate.parse(fecha);
+    public ResponseEntity<List<String>> obtenerDisponibles(@RequestParam LocalDate fecha, String especialidad) {
+        List<String> slotsDisponibles = citaService.obtenerSlotsDisponibles(fecha, especialidad);
 
-        List<String> slotsDisponibles = citaService.obtenerSlotsDisponibles(fechaConsultada);
         return ResponseEntity.ok(slotsDisponibles);
     }
 
