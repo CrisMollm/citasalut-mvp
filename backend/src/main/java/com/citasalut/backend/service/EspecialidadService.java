@@ -1,6 +1,6 @@
 package com.citasalut.backend.service;
 
-import com.citasalut.backend.model.Especialidad;
+import com.citasalut.backend.dto.EspecialidadResponse;
 import com.citasalut.backend.repository.EspecialidadRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,9 @@ public class EspecialidadService {
 
     private final EspecialidadRepository especialidadRepository;
 
-    public List<Especialidad> listarTodas() {
-        return especialidadRepository.findAll();
+    public List<EspecialidadResponse> listarTodas() {
+        return especialidadRepository.findAll().stream()
+                .map(e -> new EspecialidadResponse(e.getId(), e.getNombre()))
+                .toList();
     }
 }

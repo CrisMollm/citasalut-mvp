@@ -1,6 +1,6 @@
 package com.citasalut.backend.service;
 
-import com.citasalut.backend.model.Medico;
+import com.citasalut.backend.dto.MedicoResponse;
 import com.citasalut.backend.repository.MedicoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,8 +13,9 @@ public class MedicoService {
 
     private final MedicoRepository medicoRepository;
 
-    //Nos dara los medicos de 1 especialidad seleccionda
-    public List<Medico> listarPorEspecialidad(Integer especialidadId) {
-        return medicoRepository.findByEspecialidadId(especialidadId);
+    public List<MedicoResponse> listarPorEspecialidad(Integer especialidadId) {
+        return medicoRepository.findByEspecialidadId(especialidadId).stream()
+                .map(m -> new MedicoResponse(m.getId(), m.getNombre(), m.getEspecialidad().getId()))
+                .toList();
     }
 }
